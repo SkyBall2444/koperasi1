@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Transaksi</title>
+  <link rel="stylesheet" href="../css/bootstrap.min.css" />
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+      if (!id) {
+        alert('ID transaksi tidak ditemukan');
+        window.location.href = 'transaksi.html';
+        return;
+      }
+
+      // Ambil data transaksi via AJAX (assumsi ada get_transaksi_by_id.php)
+      fetch(`../backend/get_transaksi_by_id.php?id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data) {
+            alert('Data transaksi tidak ditemukan');
+            window.location.href = 'transaksi.html';
+            return;
+          }
+
+          document.getElementById('id_transaction').value = data.id_transaction;
+          document.getElementById('tanggal').value = data.tanggal;
+          document.getElementById('jumlah').value = data.quantity;
+          document.getElementById('harga').value = data.price;
+          document.getElementById('total').value = data.amount;
+
+         // Set customer select options
+fetch('../backend/get_customer.php')
+  .then(res => res.json())
+  .then(customers => {
+    const selectCustomer = document.getElementById('id_customer');
+    selectCustomer.innerHTML = '';  // Hapus opsi lama
+    customers.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id_customer;
+      opt.textContent = c.nama_customer;
+      if (c.id_customer == data.id_customer) opt.selected = true;
+      selectCustomer.appendChild(opt);
+    });
+  });
+
+// Set item select options
+fetch('../backend/get_item.php')
+  .then(res => res.json())
+  .then(items => {
+    const selectItem = document.getElementById('id_item');
+    selectItem.innerHTML = '';  // Hapus opsi lama
+    items.forEach(i => {
+      const opt = document.createElement('option');
+      opt.value = i.id_item;
+      opt.textContent = i.nama_item;
+      if (i.id_item == data.id_item) opt.selected = true;
+      selectItem.appendChild(opt);
+    });
+  });
+
+// Set sales select options
+fetch('../backend/get_sales.php')
+  .then(res => res.json())
+  .then(sales => {
+    const selectSales = document.getElementById('id_sales');
+    selectSales.innerHTML = '';  // Hapus opsi lama
+    sales.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id_sales;
+      opt.textContent = s.nama_sales;
+      if (s.id_sales == data.id_sales) opt.selected = true;
+      selectSales.appendChild(opt);
+    });
+  });
+
+        });
+
+      // Hitung total otomatis
+      const jumlahInput = document.getElementById('jumlah');
+      const hargaInput = document.getElementById('harga');
+      const totalInput = document.getElementById('total');
+
+      function hitungTotal() {
+        const jumlah = parseInt(jumlahInput.value) || 0;
+        const harga = parseInt(hargaInput.value) || 0;
+        totalInput.value = jumlah * harga;
+      }
+
+      jumlahInput.addEventListener('input', hitungTotal);
+      hargaInput.addEventListener('input', hitungTotal);
+    });
+  </script>
+</head>
+<body>
+  <div class="container mt-4">
+    <h3>Edit Transaksi</h3>
+    <form action="../backend/edit_transaksi.php" method="POST">
+      <input type="hidden" id="id_transaction" name="id_transaction" />
+      
+      <div class="mb-3">
+        <label for="tanggal" class="form-label">Tanggal</label>
+        <input type="date" class="form-control" id="tanggal" name="tanggal" required />
+      </div>
+      
+      <div class="mb-3">
+        <label for="id_customer" class="form-label">Customer</label>
+        <select class="form-select" id="id_customer" name="id_customer" required>
+          <option value="">Loading...</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="id_item" class="form-label">Item</label>
+        <select class="form-select" id="id_item" name="id_item" required>
+          <option value="">Loading...</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="jumlah" class="form-label">Jumlah</label>
+        <input type="number" class="form-control" id="jumlah" name="jumlah" min="1" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="harga" class="form-label">Harga per Item</label>
+        <input type="number" class="form-control" id="harga" name="harga" min="0" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="total" class="form-label">Total</label>
+        <input type="number" class="form-control" id="total" name="total" readonly />
+      </div>
+
+      <div class="mb-3">
+        <label for="id_sales" class="form-label">Sales</label>
+        <select class="form-select" id="id_sales" name="id_sales" required>
+          <option value="">Loading...</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Update</button>
+      <a href="transaksi.html" class="btn btn-secondary">Kembali</a>
+    </form>
+  </div>
+</body>
+</html>

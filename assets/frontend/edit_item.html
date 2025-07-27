@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Item</title>
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <script>
+    // Ambil parameter id dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+
+    // Fetch data item berdasarkan id
+    window.onload = () => {
+      fetch(`../backend/get_item_by_id.php?id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('id_item').value = data.id_item;
+          document.getElementById('nama_item').value = data.nama_item;
+          document.getElementById('uom').value = data.uom;
+          document.getElementById('harga_beli').value = data.harga_beli;
+          document.getElementById('harga_jual').value = data.harga_jual;
+        });
+    };
+  </script>
+</head>
+<body class="p-4 bg-light">
+  <div class="container">
+    <h3 class="mb-4">Edit Item</h3>
+    <form action="../backend/update_item.php" method="POST">
+      <input type="hidden" name="id_item" id="id_item">
+      <div class="mb-3">
+        <label for="nama_item" class="form-label">Nama Item</label>
+        <input type="text" class="form-control" name="nama_item" id="nama_item" required>
+      </div>
+      <div class="mb-3">
+        <label for="uom" class="form-label">Satuan (UOM)</label>
+        <input type="text" class="form-control" name="uom" id="uom" required>
+      </div>
+      <div class="mb-3">
+        <label for="harga_beli" class="form-label">Harga Beli</label>
+        <input type="number" class="form-control" name="harga_beli" id="harga_beli" required>
+      </div>
+      <div class="mb-3">
+        <label for="harga_jual" class="form-label">Harga Jual</label>
+        <input type="number" class="form-control" name="harga_jual" id="harga_jual" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+      <a href="item.html" class="btn btn-secondary">Batal</a>
+    </form>
+  </div>
+</body>
+</html>

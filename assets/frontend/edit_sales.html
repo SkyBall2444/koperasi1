@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Data Sales</title>
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+</head>
+<body class="p-4">
+  <div class="container">
+    <h3 class="fw-bold mb-4">Edit Data Sales</h3>
+    <form id="formSales" method="POST">
+      <input type="hidden" name="id_sales" id="id_sales">
+      <div class="mb-3">
+        <label class="form-label">Sales No</label>
+        <input type="text" name="sales_no" id="sales_no" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Tanggal Sales</label>
+        <input type="date" name="tgl_sales" id="tgl_sales" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Customer</label>
+        <select name="id_customer" id="id_customer" class="form-select" required></select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Nama Sales</label>
+        <input type="text" name="nama_sales" id="nama_sales" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">DO Number</label>
+        <input type="text" name="do_number" id="do_number" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Status</label>
+        <select name="status" id="status" class="form-select" required>
+          <option value="Lunas">Lunas</option>
+          <option value="Belum Lunas">Belum Lunas</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Update</button>
+      <a href="sales.html" class="btn btn-secondary">Kembali</a>
+    </form>
+  </div>
+
+  <script>
+    const id = new URLSearchParams(window.location.search).get('id');
+    fetch(`../backend/get_sales_by_id.php?id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("id_sales").value = data.id_sales;
+        document.getElementById("sales_no").value = data.sales_no;
+        document.getElementById("tgl_sales").value = data.tgl_sales;
+        document.getElementById("do_number").value = data.do_number;
+        document.getElementById("status").value = data.status;
+        document.getElementById("nama_sales").value = data.nama_sales;
+
+        // fetch customer
+        fetch('../backend/get_customer.php')
+          .then(res => res.json())
+          .then(customers => {
+            const select = document.getElementById("id_customer");
+            customers.forEach(c => {
+              const option = document.createElement("option");
+              option.value = c.id_customer;
+              option.text = c.nama_customer;
+              if (c.id_customer == data.id_customer) option.selected = true;
+              select.add(option);
+            });
+          });
+      });
+
+    document.getElementById("formSales").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      fetch('../backend/update_sales.php', {
+        method: 'POST',
+        body: formData
+      }).then(() => {
+        alert("Data berhasil diperbarui");
+        window.location.href = "sales.html";
+      });
+    });
+  </script>
+</body>
+</html>

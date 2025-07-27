@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Item</title>
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../fontawesome/all.min.css">
+<style>
+    body {
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    #sidebar-wrapper {
+      width: 250px;
+      background-color: #0d6efd;
+      color: white;
+      height: 100vh;
+      position: fixed;
+    }
+    .sidebar-heading {
+      font-size: 1.5rem;
+      text-align: center;
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+    }
+    .list-group-item {
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+    }
+    .list-group-item:hover,
+    .list-group-item.active {
+      background-color: #0b5ed7;
+    }
+    .list-group-item img {
+      margin-right: 10px;
+    }
+    .content {
+      margin-left: 250px;
+      padding: 30px;
+      flex: 1;
+      background-color: #f8f9fa;
+    }
+    table th, table td {
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+  <div class="bg-primary text-white" id="sidebar-wrapper">
+    <div class="sidebar-heading py-4 fw-bold border-bottom">📋 Menu</div>
+    <div class="list-group list-group-flush">
+      <a href="../index.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/dashboard.png" width="25"> Dashboard
+      </a>
+      <a href="customer.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/customer.png" width="25"> Customer
+      </a>
+      <a href="sales.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/sales.png" width="25"> Sales
+      </a>
+      <a href="item.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/item.png" width="25"> Item
+      </a>
+      <a href="transaksi.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/transaction.png" width="25"> Transaction
+      </a>
+      <a href="login.html" class="list-group-item list-group-item-action bg-danger text-white">
+        <img src="../images/logout.png" width="25"> Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <h3 class="mb-4">Data Item</h3>
+    <a href="add_item.html" class="btn btn-primary mb-3">
+      <i class="fas fa-plus"></i> Tambah Item
+    </a>
+    <table class="table table-bordered table-striped">
+      <thead class="table-primary text-center">
+        <tr>
+          <th>No</th>
+          <th>ID Item</th>
+          <th>Nama Item</th>
+          <th>UOM</th>
+          <th>Harga Beli</th>
+          <th>Harga Jual</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="itemTableBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    fetch('../backend/get_item.php')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.getElementById('itemTableBody');
+        let no = 1;
+        data.forEach(item => {
+          tbody.innerHTML += `
+            <tr>
+              <td class="text-center">${no++}</td>
+              <td>${item.id_item}</td>
+              <td>${item.nama_item}</td>
+              <td>${item.uom}</td>
+              <td class="text-end">Rp ${parseInt(item.harga_beli).toLocaleString()}</td>
+              <td class="text-end">Rp ${parseInt(item.harga_jual).toLocaleString()}</td>
+              <td class="text-center">
+                <a href="edit_item.html?id=${item.id_item}" class="btn btn-sm btn-warning">Edit</a>
+                <button onclick="hapusItem(${item.id_item})" class="btn btn-sm btn-danger">Hapus</button>
+              </td>
+            </tr>
+          `;
+        });
+      });
+
+    function hapusItem(id) {
+      if (confirm("Yakin ingin menghapus item ini?")) {
+        fetch(`../backend/delete_item.php?id=${id}`).then(() => location.reload());
+      }
+    }
+  </script>
+</body>
+</html>

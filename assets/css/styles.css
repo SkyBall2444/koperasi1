@@ -1,0 +1,35 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+}
+
+#wrapper {
+    min-height: 100vh;
+}
+
+ #sidebar-wrapper {
+      min-width: 250px;
+      height: 100vh;
+    }
+   
+    .sidebar-heading {
+      font-size: 1.5rem;
+      text-align: center;
+    }
+
+.card-hover {
+    transition: transform 0.2s ease;
+}
+
+.card-hover:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.card img {
+    margin-bottom: 10px;
+}
+
+.card-link {
+    text-decoration: none;
+    color: inherit;
+}

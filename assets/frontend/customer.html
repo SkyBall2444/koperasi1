@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manajemen Customer</title>
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <style>
+    body {
+      display: flex;
+    }
+    #sidebar-wrapper {
+      min-width: 250px;
+      height: 100vh;
+    }
+    .sidebar-heading {
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    .list-group-item img {
+      margin-right: 10px;
+    }
+    .container {
+      padding: 2rem;
+      flex-grow: 1;
+    }
+    table th, table td {
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="bg-primary text-white" id="sidebar-wrapper">
+    <div class="sidebar-heading py-4 fw-bold border-bottom">📋 Menu</div>
+    <div class="list-group list-group-flush">
+      <a href="../index.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/dashboard.png" width="25"> Dashboard
+      </a>
+      <a href="customer.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/customer.png" width="25"> Customer
+      </a>
+      <a href="sales.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/sales.png" width="25"> Sales
+      </a>
+      <a href="item.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/item.png" width="25"> Item
+      </a>
+      <a href="transaksi.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/transaction.png" width="25"> Transaction
+      </a>
+      <a href="login.html" class="list-group-item list-group-item-action bg-danger text-white">
+        <img src="../images/logout.png" width="25"> Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h2 class="mb-4">Manajemen Customer</h2>
+
+    <form id="customerForm" class="row g-3 mb-4">
+  <input type="hidden" id="id_customer">
+  
+  <div class="col-md-6">
+    <label for="nama_customer" class="form-label">Nama Customer</label>
+    <input type="text" class="form-control" id="nama_customer" placeholder="Masukkan nama lengkap" required>
+  </div>
+
+  <div class="col-md-6">
+    <label for="telp" class="form-label">No. Telepon</label>
+    <input type="text" class="form-control" id="telp" placeholder="Contoh: 08123456789" required>
+  </div>
+
+  <div class="col-md-12">
+    <label for="alamat" class="form-label">Alamat Lengkap</label>
+    <textarea class="form-control" id="alamat" placeholder="Masukkan alamat customer" rows="2" required></textarea>
+  </div>
+
+  <div class="col-md-6">
+    <label for="fax" class="form-label">No. Fax</label>
+    <input type="text" class="form-control" id="fax" placeholder="Opsional: No. Fax">
+  </div>
+
+  <div class="col-md-6">
+    <label for="email" class="form-label">Alamat Email</label>
+    <input type="email" class="form-control" id="email" placeholder="Contoh: nama@email.com" required>
+  </div>
+
+  <div class="col-12">
+    <button type="submit" class="btn btn-success">💾 Simpan</button>
+  </div>
+</form>
+
+    <table class="table table-striped table-bordered">
+      <thead class="table-primary">
+        <tr>
+          <th>Nama</th><th>Alamat</th><th>Telp</th><th>Fax</th><th>Email</th><th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="customerTable"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const api = '../backend/customer.php';
+
+    function loadCustomers() {
+      fetch(api)
+        .then(res => res.json())
+        .then(data => {
+          const rows = data.map(c => `
+            <tr>
+              <td>${c.nama_customer}</td>
+              <td>${c.alamat}</td>
+              <td>${c.telp}</td>
+              <td>${c.fax}</td>
+              <td>${c.email}</td>
+              <td>
+                <button onclick='editCustomer(${JSON.stringify(c)})' class="btn btn-warning btn-sm">✏️ Edit</button>
+                <button onclick='deleteCustomer(${c.id_customer})' class="btn btn-danger btn-sm">🗑️ Hapus</button>
+              </td>
+            </tr>
+          `).join('');
+          document.getElementById("customerTable").innerHTML = rows;
+        });
+    }
+
+    function editCustomer(c) {
+      document.getElementById('id_customer').value = c.id_customer;
+      document.getElementById('nama_customer').value = c.nama_customer;
+      document.getElementById('alamat').value = c.alamat;
+      document.getElementById('telp').value = c.telp;
+      document.getElementById('fax').value = c.fax;
+      document.getElementById('email').value = c.email;
+    }
+
+    function deleteCustomer(id) {
+      fetch(api, {
+        method: 'DELETE',
+        body: JSON.stringify({ id_customer: id })
+      }).then(loadCustomers);
+    }
+
+    document.getElementById("customerForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const id = document.getElementById("id_customer").value;
+      const data = {
+        id_customer: id,
+        nama_customer: document.getElementById("nama_customer").value,
+        alamat: document.getElementById("alamat").value,
+        telp: document.getElementById("telp").value,
+        fax: document.getElementById("fax").value,
+        email: document.getElementById("email").value
+      };
+
+      fetch(api, {
+        method: id ? "PUT" : "POST",
+        body: JSON.stringify(data)
+      }).then(() => {
+        this.reset();
+        loadCustomers();
+      });
+    });
+
+    loadCustomers();
+  </script>
+
+  <script src="../js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

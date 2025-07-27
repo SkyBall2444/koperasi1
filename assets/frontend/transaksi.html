@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Data Transaksi</title>
+  <link rel="stylesheet" href="../css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../fontawesome/all.min.css" />
+  <style>
+    body {
+      display: flex;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    #sidebar-wrapper {
+      min-width: 250px;
+      background-color: #007bff;
+      color: white;
+      height: 100vh;
+    }
+    .sidebar-heading {
+      font-size: 1.5rem;
+      text-align: center;
+      padding: 1rem 0;
+      border-bottom: 2px solid #ffffff33;
+    }
+    .list-group-item {
+      border: none;
+    }
+    .list-group-item img {
+      margin-right: 10px;
+    }
+    .container {
+      padding: 2rem;
+      flex-grow: 1;
+    }
+    table th, table td {
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="bg-primary text-white" id="sidebar-wrapper">
+    <div class="sidebar-heading py-4 fw-bold border-bottom">📋 Menu</div>
+    <div class="list-group list-group-flush">
+      <a href="../index.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/dashboard.png" width="25" /> Dashboard
+      </a>
+      <a href="customer.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/customer.png" width="25" /> Customer
+      </a>
+      <a href="sales.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/sales.png" width="25" /> Sales
+      </a>
+      <a href="item.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/item.png" width="25" /> Item
+      </a>
+      <a href="transaksi.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/transaction.png" width="25" /> Transaction
+      </a>
+      <a href="login.html" class="list-group-item list-group-item-action bg-danger text-white">
+        <img src="../images/logout.png" width="25" /> Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="fw-bold">Data Transaksi</h3>
+      <a href="add_transaksi.html" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Tambah Transaksi
+      </a>
+    </div>
+
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>ID Transaksi</th>
+          <th>Tanggal</th>
+          <th>Customer</th>
+          <th>Item</th>
+          <th>Jumlah</th>
+          <th>Total</th>
+          <th>Nama Sales</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="transaksiTable">
+        <!-- Data transaksi dimuat lewat JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <script src="../js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      fetch("../backend/get_transaksi.php")
+        .then(response => response.json())
+        .then(data => {
+          const tbody = document.getElementById("transaksiTable");
+          tbody.innerHTML = data.map(row => `
+            <tr>
+              <td>${row.id_transaction}</td>
+              <td>${row.tanggal}</td>
+              <td>${row.nama_customer}</td>
+              <td>${row.nama_item}</td>
+              <td>${row.jumlah}</td>
+              <td>Rp ${parseInt(row.total || 0).toLocaleString()}</td>
+              <td>${row.nama_sales}</td>
+              <td>
+                <a href="edit_transaksi.html?id=${row.id_transaction}" class="btn btn-sm btn-warning">
+                  <i class="fas fa-edit"></i>
+                </a>
+                <button onclick="hapus(${row.id_transaction})" class="btn btn-sm btn-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        })
+        .catch(error => {
+          console.error('Gagal memuat data transaksi:', error);
+        });
+    });
+
+    function hapus(id) {
+      if (confirm("Yakin ingin menghapus transaksi ini?")) {
+        window.location.href = `../backend/delete_transaksi.php?id=${id}`;
+      }
+    }
+  </script>
+</body>
+</html>

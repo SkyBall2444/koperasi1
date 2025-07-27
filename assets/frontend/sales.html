@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Sales</title>
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../fontawesome/all.min.css">
+  <style>
+    body {
+    #sidebar-wrapper {
+      min-width: 250px;
+      height: 100vh;
+    }
+    .sidebar-heading {
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    .list-group-item img {
+      margin-right: 10px;
+    }
+    .container-fluid {
+      padding: 2rem;
+      flex-grow: 1;
+    }
+    table th, table td {
+      vertical-align: middle;
+    }
+  }
+  </style>
+</head>
+<body>
+<div class="d-flex" id="wrapper">
+
+  <!-- Sidebar -->
+  <div class="bg-primary text-white" id="sidebar-wrapper">
+    <div class="sidebar-heading py-4 fw-bold border-bottom">📋 Menu</div>
+    <div class="list-group list-group-flush">
+      <a href="../index.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/dashboard.png" width="25"> Dashboard
+      </a>
+      <a href="customer.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/customer.png" width="25"> Customer
+      </a>
+      <a href="sales.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/sales.png" width="25"> Sales
+      </a>
+      <a href="item.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/item.png" width="25"> Item
+      </a>
+      <a href="transaksi.html" class="list-group-item list-group-item-action bg-primary text-white">
+        <img src="../images/transaction.png" width="25"> Transaction
+      </a>
+      <a href="login.html" class="list-group-item list-group-item-action bg-danger text-white">
+        <img src="../images/logout.png" width="25"> Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div id="page-content-wrapper" class="p-4 w-100">
+    <div class="container-fluid">
+      <h3 class="fw-bold mb-4">DATA SALES / INVOICE</h3>
+      <div class="d-flex justify-content-end mb-3">
+        <a href="add_sales.html" class="btn btn-success">
+          <i class="fas fa-plus"></i> Tambah Data
+        </a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+          <thead class="table-primary text-center">
+            <tr>
+              <th>No</th>
+              <th>Sales No</th>
+              <th>DO No</th>
+              <th>Tgl Sales</th>
+              <th>Nama Customer</th>
+              <th>Nama Sales</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="salesTableBody">
+            <!-- Data akan dimuat dengan JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  fetch('../backend/get_sales.php')
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById('salesTableBody');
+      let no = 1;
+      data.forEach(item => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="text-center">${no++}</td>
+            <td>${item.id_sales ?? '-'}</td>
+            <td>${item.do_number ?? '-'}</td>
+            <td>${item.tgl_sales ?? '-'}</td>
+            <td>${item.nama_customer ?? '-'}</td>
+            <td>${item.nama_sales ?? '-'}</td>
+            <td>${item.status ?? '-'}</td>
+            <td class="text-center">
+              <a href="edit_sales.html?id=${item.id_sales}" class="btn btn-sm btn-warning">Edit</a>
+              <button onclick="hapusSales(${item.id_sales})" class="btn btn-sm btn-danger">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    })
+    .catch(err => {
+      console.error("Gagal memuat data sales:", err);
+    });
+
+  function hapusSales(id) {
+    if (confirm("Yakin ingin menghapus sales ini?")) {
+      fetch(`../backend/delete_sales.php?id=${id}`).then(() => location.reload());
+    }
+  }
+</script>
+
+<script src="../js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

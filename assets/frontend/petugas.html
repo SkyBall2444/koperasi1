@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Petugas</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="bg-primary text-white" id="sidebar-wrapper">
+        <div class="sidebar-heading py-4 fw-bold border-bottom">📋 Menu</div>
+        <div class="list-group list-group-flush">
+            <a href="../index.html" class="list-group-item list-group-item-action bg-primary text-white">
+                <img src="../images/dashboard.png" width="25"> Dashboard
+            </a>
+            <a href="customer.html" class="list-group-item list-group-item-action bg-primary text-white">
+                <img src="../images/customer.png" width="25"> Customer
+            </a>
+            <a href="sales.html" class="list-group-item list-group-item-action bg-primary text-white">
+                <img src="../images/sales.png" width="25"> Sales
+            </a>
+            <a href="item.html" class="list-group-item list-group-item-action bg-primary text-white">
+                <img src="../images/item.png" width="25"> Item
+            </a>
+            <a href="transaksi.html" class="list-group-item list-group-item-action bg-primary text-white">
+                <img src="../images/transaction.png" width="25"> Transaction
+            </a>
+            <a href="petugas.html" class="list-group-item list-group-item-action bg-primary text-white active">
+                <img src="../images/petugas.png" width="25"> Petugas
+            </a>
+            <a href="login.html" class="list-group-item list-group-item-action bg-danger text-white">
+                <img src="../images/logout.png" width="25"> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="content p-4 w-100 bg-light">
+        <h4 class="text-primary fw-bold mb-4">Manajemen Data Petugas</h4>
+
+        <div class="mb-3">
+            <a href="add_petugas.html" class="btn btn-primary">+ Tambah Petugas</a>
+        </div>
+
+        <div class="table-responsive shadow-sm bg-white p-3 rounded">
+            <table class="table table-bordered table-striped">
+                <thead class="table-primary">
+                    <tr>
+                        <th>ID Petugas</th>
+                        <th>Nama Petugas</th>
+                        <th>Username</th>
+                        <th>Level</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="petugasData">
+                    <!-- Data akan dimuat dengan JavaScript dari get_petugas.php -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="../js/bootstrap.bundle.min.js"></script>
+<script>
+// Menampilkan data dari backend
+fetch('../backend/get_petugas.php')
+    .then(response => response.json())
+    .then(data => {
+        const tbody = document.getElementById("petugasData");
+        data.forEach(petugas => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${petugas.id_petugas}</td>
+                <td>${petugas.nama}</td>
+                <td>${petugas.username}</td>
+                <td>${petugas.level}</td>
+                <td>
+                    <a href="edit_petugas.html?id=${petugas.id_petugas}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="../backend/delete_petugas.php?id=${petugas.id_petugas}" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus data?')">Hapus</a>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    });
+</script>
+</body>
+</html>

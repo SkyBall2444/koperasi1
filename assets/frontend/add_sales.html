@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Tambah Data Sales</title>
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+</head>
+<body class="p-4">
+  <div class="container">
+    <h3 class="fw-bold mb-4">Tambah Data Sales</h3>
+    <form action="../backend/add_sales.php" method="POST">
+      <div class="mb-3">
+        <label class="form-label">Sales No</label>
+        <input type="text" name="sales_no" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Tanggal Sales</label>
+        <input type="date" name="tgl_sales" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Customer</label>
+        <select name="id_customer" class="form-select" required id="customerSelect"></select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Nama Sales</label>
+        <input type="text" name="nama_sales" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">DO Number</label>
+        <input type="text" name="do_number" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select" required>
+          <option value="Lunas">Lunas</option>
+          <option value="Belum Lunas">Belum Lunas</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Simpan</button>
+      <a href="sales.html" class="btn btn-secondary">Kembali</a>
+    </form>
+  </div>
+
+  <script>
+    fetch('../backend/get_customer.php')
+      .then(res => res.json())
+      .then(data => {
+        const select = document.getElementById('customerSelect');
+        data.forEach(c => {
+          select.innerHTML += `<option value="${c.id_customer}">${c.nama_customer}</option>`;
+        });
+      });
+  </script>
+</body>
+</html>
