@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Manajer</title>
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h2 class="mb-4">Dashboard Manajer - Laporan Transaksi</h2>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped" id="laporanTable">
+        <thead class="table-dark">
+          <tr>
+            <th>ID Transaksi</th>
+            <th>Tanggal</th>
+            <th>Customer</th>
+            <th>Item</th>
+            <th>Jumlah</th>
+            <th>Harga Satuan</th>
+            <th>Total</th>
+            <th>Sales</th>
+          </tr>
+        </thead>
+        <tbody id="laporanBody">
+          <!-- Data akan dimuat dengan fetch -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    fetch('../backend/get_laporan.php')
+      .then(response => response.json())
+      .then(data => {
+        const tableBody = document.getElementById("laporanBody");
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${row.id_transaction}</td>
+            <td>${row.tanggal}</td>
+            <td>${row.nama_customer}</td>
+            <td>${row.nama_item}</td>
+            <td>${row.jumlah}</td>
+            <td>Rp${parseInt(row.harga).toLocaleString()}</td>
+            <td>Rp${parseInt(row.total).toLocaleString()}</td>
+            <td>${row.nama_sales}</td>
+          `;
+          tableBody.appendChild(tr);
+        });
+      })
+      .catch(error => {
+        console.error('Gagal memuat laporan:', error);
+      });
+  </script>
+</body>
+</html>
