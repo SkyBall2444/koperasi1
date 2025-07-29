@@ -12,7 +12,7 @@ $sql = "SELECT
           s.nama_sales
         FROM transaction t
         JOIN sales s ON t.id_sales = s.id_sales
-        JOIN customer c ON t.id_customer = c.id_customer
+        JOIN customer c ON s.id_customer = c.id_customer
         JOIN item i ON t.id_item = i.id_item";
 
 $result = $conn->query($sql);
