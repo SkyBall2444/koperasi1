@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(90deg, #4e73df, #1cc88a);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+        }
+        .card:hover {
+            transform: scale(1.01);
+            transition: 0.3s;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        .checkout-title {
+            font-weight: 700;
+            color: #4e73df;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="index_customer.html">🛒 Toko Kami</a>
+        <a href="keranjang.html" class="btn btn-warning btn-sm ms-auto">Kembali ke Keranjang</a>
+    </div>
+</nav>
+
+<!-- ISI -->
+<div class="container my-5">
+    <h3 class="checkout-title mb-4">Checkout</h3>
+    <div class="row g-4">
+        <!-- RINGKASAN BELANJA -->
+        <div class="col-md-6">
+            <div class="card p-4 shadow-sm">
+                <h5 class="fw-bold">Ringkasan Belanja</h5>
+                <table class="table table-borderless">
+                    <thead>
+                        <tr>
+                            <th>Produk</th>
+                            <th>Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody id="checkoutItems"></tbody>
+                </table>
+                <hr>
+                <h5>Total: Rp <span id="checkoutTotal">0</span></h5>
+            </div>
+        </div>
+
+        <!-- FORM DATA PEMBELI -->
+        <div class="col-md-6">
+            <div class="card p-4 shadow-sm">
+                <h5 class="fw-bold">Data Pembeli</h5>
+                <form id="checkoutForm">
+                    <div class="mb-3">
+                        <label class="form-label">Nama Lengkap</label>
+                        <input type="text" class="form-control" name="nama" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nomor Telepon</label>
+                        <input type="text" class="form-control" name="telepon" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Alamat Lengkap</label>
+                        <textarea class="form-control" name="alamat" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Konfirmasi Pesanan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="text-center py-3 bg-white shadow-sm mt-5">
+    <small>© 2025 Toko Kami - Semua Hak Dilindungi</small>
+</footer>
+
+<script src="js/bootstrap.bundle.min.js"></script>
+<script>
+function loadCheckoutItems() {
+    fetch('backend/get_cart.php')
+        .then(res => res.json())
+        .then(data => {
+            let tbody = document.getElementById('checkoutItems');
+            let total = 0;
+            tbody.innerHTML = '';
+            data.forEach(item => {
+                total += parseFloat(item.harga_jual);
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.nama_item}</td>
+                        <td>Rp ${parseInt(item.harga_jual).toLocaleString('id-ID')}</td>
+                    </tr>
+                `;
+            });
+            document.getElementById('checkoutTotal').innerText = total.toLocaleString('id-ID');
+        });
+}
+
+document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    fetch('backend/checkout.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+        if (data.success) {
+            window.location.href = 'index_customer.html';
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', loadCheckoutItems);
+</script>
+</body>
+</html>

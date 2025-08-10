@@ -43,6 +43,7 @@
                         <div class="card-body">
                             <img src="images/customer.png" width="40">
                             <h6 class="mt-2">Customer</h6>
+                            <h4 id="countCustomer" class="fw-bold text-primary">0</h4>
                         </div>
                     </div>
                 </a>
@@ -53,6 +54,7 @@
                         <div class="card-body">
                             <img src="images/sales.png" width="40">
                             <h6 class="mt-2">Sales</h6>
+                            <h4 id="countSales" class="fw-bold text-primary">0</h4>
                         </div>
                     </div>
                 </a>
@@ -63,6 +65,7 @@
                         <div class="card-body">
                             <img src="images/item.png" width="40">
                             <h6 class="mt-2">Item</h6>
+                            <h4 id="countItem" class="fw-bold text-primary">0</h4>
                         </div>
                     </div>
                 </a>
@@ -73,15 +76,28 @@
                         <div class="card-body">
                             <img src="images/transaction.png" width="40">
                             <h6 class="mt-2">Transaksi</h6>
+                            <h4 id="countTransaksi" class="fw-bold text-primary">0</h4>
                         </div>
                     </div>
-                </a>
-            </div>
                 </a>
             </div>
         </div>
     </div>
 </div>
+
 <script src="js/bootstrap.bundle.min.js"></script>
+<script>
+fetch('backend/get_dashboard_stats.php?t=' + new Date().getTime(), {
+    cache: "no-store"
+})
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('countCustomer').innerText = data.customer;
+        document.getElementById('countSales').innerText = data.sales;
+        document.getElementById('countItem').innerText = data.item;
+        document.getElementById('countTransaksi').innerText = data.transaksi;
+    })
+    .catch(err => console.error('Error mengambil data dashboard:', err));
+</script>
 </body>
 </html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Keranjang</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Navbar gradasi */
+        .navbar {
+            background: linear-gradient(90deg, #4e73df, #1cc88a);
+        }
+        /* Tabel modern */
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        thead {
+            background-color: #f8f9fc;
+        }
+        tbody tr:hover {
+            background-color: #f1f5ff;
+            transition: 0.2s;
+        }
+        /* Tombol checkout */
+        .btn-checkout {
+            background-color: #1cc88a;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-checkout:hover {
+            background-color: #17a673;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="index_customer.html">⬅ Kembali</a>
+        <span class="navbar-text fw-bold text-white">🛒 Keranjang Belanja</span>
+    </div>
+</nav>
+
+<!-- KONTEN -->
+<div class="container mt-4">
+    <div class="card shadow-sm p-3">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead class="fw-bold text-primary">
+                    <tr>
+                        <th>Nama Item</th>
+                        <th>Harga</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="cartTable"></tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <h5 class="fw-bold">Total: <span class="text-success">Rp <span id="totalHarga">0</span></span></h5>
+            <button class="btn btn-checkout px-4 text-white" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/bootstrap.bundle.min.js"></script>
+<script>
+let totalBelanja = 0;
+
+function loadCart() {
+    fetch('backend/get_cart.php')
+        .then(res => res.json())
+        .then(data => {
+            let table = document.getElementById('cartTable');
+            totalBelanja = 0;
+            table.innerHTML = "";
+            data.forEach((item, index) => {
+                totalBelanja += parseFloat(item.harga_jual);
+                table.innerHTML += `
+                    <tr>
+                        <td>${item.nama_item}</td>
+                        <td>Rp ${parseInt(item.harga_jual).toLocaleString('id-ID')}</td>
+                        <td class="text-center">
+                            <button class="btn btn-danger btn-sm" onclick="confirmRemove(${index})">
+                                Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById('totalHarga').innerText = totalBelanja.toLocaleString('id-ID');
+        });
+}
+
+function confirmRemove(index) {
+    if (confirm("Apakah Anda yakin ingin menghapus item ini dari keranjang?")) {
+        removeItem(index);
+    }
+}
+
+function removeItem(index) {
+    fetch('backend/remove_from_cart.php?index=' + index)
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            loadCart();
+        });
+}
+
+function checkout() {
+    if (totalBelanja === 0) {
+        alert("Keranjang masih kosong!");
+        return;
+    }
+    if (confirm(`Total belanja Anda Rp ${totalBelanja.toLocaleString('id-ID')}. Lanjutkan ke checkout?`)) {
+        // Proses checkout (bisa diarahkan ke halaman pembayaran)
+        window.location.href = "checkout.html";
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadCart);
+</script>
+</body>
+</html>

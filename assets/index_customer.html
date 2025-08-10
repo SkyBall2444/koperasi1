@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Pelanggan</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Navbar gradasi */
+        .navbar {
+            background: linear-gradient(90deg, #4e73df, #1cc88a);
+        }
+        .navbar-brand {
+            font-weight: 700;
+        }
+        /* Card produk */
+        .product-card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background-color: #4e73df;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #375ab8;
+        }
+        /* Harga */
+        .price {
+            font-size: 1.1rem;
+            color: #1cc88a;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="index_customer.html">🛒 Toko Kami</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="index_customer.html">Produk</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tentang.html">Tentang Toko</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav align-items-center">
+                <li class="nav-item me-3">
+                    <a href="keranjang.html" class="btn btn-warning btn-sm">
+                        Keranjang <span id="cartCount" class="badge bg-dark">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-light btn-sm" href="frontend/login.html">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- CONTENT -->
+<div class="container mt-5">
+    <h4 class="fw-bold text-primary mb-4">✨ Pilihan Produk</h4>
+    <div class="row g-4" id="itemList"></div>
+</div>
+
+<script src="js/bootstrap.bundle.min.js"></script>
+<script>
+// Ambil daftar item dari backend
+function loadItems() {
+    fetch('backend/get_items.php')
+    .then(res => res.json())
+    .then(items => {
+        let html = '';
+        items.forEach(item => {
+            html += `
+                <div class="col-md-4 col-sm-6">
+                    <div class="card product-card p-3 shadow-sm">
+                        <h6 class="fw-bold">${item.nama_item} (${item.uom})</h6>
+                        <p class="price">Rp ${parseInt(item.harga_jual).toLocaleString('id-ID')}</p>
+                        <button class="btn btn-primary w-100 mt-2" onclick="addToCart(${item.id_item})">Tambah ke Keranjang</button>
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('itemList').innerHTML = html;
+    });
+}
+
+// Tambahkan item ke keranjang
+function addToCart(id) {
+    fetch('backend/add_to_cart.php?id=' + id)
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            updateCartCount();
+        });
+}
+
+// Update jumlah keranjang
+function updateCartCount() {
+    fetch('backend/get_cart.php')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('cartCount').innerText = data.length;
+        });
+}
+
+// Saat halaman selesai load
+document.addEventListener('DOMContentLoaded', () => {
+    loadItems();
+    updateCartCount();
+});
+</script>
+</body>
+</html>

@@ -13,6 +13,29 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
+    }
+
+    /* Tombol back floating */
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      color: #6610f2;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 10px 14px;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: all 0.2s ease-in-out;
+      z-index: 1000;
+    }
+    .back-btn:hover {
+      background: #6610f2;
+      color: white;
+      transform: scale(1.05);
     }
 
     .login-card {
@@ -44,6 +67,11 @@
   </style>
 </head>
 <body>
+
+  <!-- Tombol floating kembali -->
+  <button class="back-btn" onclick="window.location.href='../index_customer.html'">
+    <i class="fas fa-arrow-left"></i>
+  </button>
 
   <div class="login-card">
     <div class="text-center mb-4">
@@ -82,9 +110,9 @@
       const alertBox = document.getElementById("alert");
 
       if (username === "manajer" && password === "12345") {
-        window.location.href = "dashboard_manager.html"; // akses lihat saja
+        window.location.href = "dashboard_manager.html";
       } else if (username === "petugas" && password === "12345") {
-        window.location.href = "../index.html"; // akses penuh
+        window.location.href = "../index.html";
       } else {
         alertBox.style.display = "block";
       }
